@@ -21,6 +21,13 @@ public class Main {
         Main creme;
         List<Main> toppings;
         int stock;
+
+        public Cupcake(Main base, Main creme, List<Main> toppings, int stock) {
+            this.base = base;
+            this.creme = creme;
+            this.toppings = toppings;
+            this.stock = stock;
+        }
     }
 }
 
