@@ -1,9 +1,7 @@
 package org.example;
 
 import org.junit.jupiter.api.Test;
-
 import java.util.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestMenu {
@@ -40,28 +38,32 @@ public class TestMenu {
 
     @Test
     public void testIngrédientÉpuiséNonListé() {
-        Main base = ingr("Nature", 1f, 0);
-        Main creme = ingr("Vanille", 0.9f, 3);
+        Main base = ingr("Nature", 1f, 0); // épuisé
+        Main baseOk = ingr("Choco", 1f, 5); // dispo
+        Menu menu = new Menu(new ArrayList<>(), List.of(base, baseOk), new ArrayList<>(), new ArrayList<>());
 
-        Menu menu = new Menu(new ArrayList<>(), List.of(base), List.of(creme), new ArrayList<>());
-
-        assertFalse(menu.bases.stream().anyMatch(b -> b.stock == 0), "Les ingrédients épuisés ne doivent pas apparaître");
+        // Vérifie que tous les ingrédients présents dans menu.bases ont bien un stock > 0
+        boolean tousDisponibles = menu.bases.stream().allMatch(Main::Dispo);
+        assertTrue(tousDisponibles, "Le menu ne doit contenir que des bases disponibles");
     }
 
     @Test
     public void testCupcakeDuJourÉpuiséNonListé() {
-        Cupcake c1 = cupcake(ingr("Base", 1f, 1), ingr("Crème", 1f, 1), new ArrayList<>(), 0);
+        Cupcake c1 = cupcake(ingr("Base", 1f, 1), ingr("Crème", 1f, 1), new ArrayList<>(), 0); // stock 0
+        Cupcake c2 = cupcake(ingr("Base", 1f, 2), ingr("Crème", 1f, 2), new ArrayList<>(), 3); // dispo
 
-        Menu menu = new Menu(List.of(c1), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        Menu menu = new Menu(List.of(c1, c2), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 
-        assertTrue(menu.cupcakesDuJour.stream().noneMatch(c -> c.stock == 0), "Un cupcake du jour épuisé ne doit pas apparaître");
+        boolean aucunEpuisé = menu.cupcakesDuJour.stream().noneMatch(c -> c.stock == 0);
+        assertTrue(aucunEpuisé, "Un cupcake du jour épuisé ne doit pas apparaître");
     }
 
     @Test
     public void testPlusDeBaseOuCreme_AfficheQueCupcakeDuJour() {
         Main base = ingr("Base", 1f, 0); // plus de base
         Main creme = ingr("Crème", 1f, 0); // plus de crème
-        Cupcake c1 = cupcake(ingr("Base", 1f, 2), ingr("Crème", 1f, 2), new ArrayList<>(), 3);
+
+        Cupcake c1 = cupcake(ingr("Base", 1f, 2), ingr("Crème", 1f, 2), new ArrayList<>(), 3); // cupcake du jour valide
 
         Menu menu = new Menu(List.of(c1), List.of(base), List.of(creme), new ArrayList<>());
 
